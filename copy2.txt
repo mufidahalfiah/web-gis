@@ -1,0 +1,46 @@
+var textMarkers = []; // Array untuk menyimpan marker teks
+
+      function addTextToFeature(feature, layer) {
+        // Menghitung titik tengah dari layer (GeoJSON feature)
+        let center = layer.getBounds().getCenter();
+        let textMarker = L.marker(center, {
+          icon: L.divIcon({
+            className: "custom-label",
+            html: `<div>${feature.properties.Suhu}°C</div>`,
+            iconSize: [50, 20],
+            iconAnchor: [25, 10],
+          }),
+          interactive: false,
+        });
+        textMarkers.push(textMarker); // Menambahkan marker ke array
+        textMarker.addTo(map); // Menambahkan marker ke peta
+      }
+
+      function removeTextMarkers() {
+        for (let marker of textMarkers) {
+          map.removeLayer(marker);
+        }
+        textMarkers = [];
+      }
+
+      function updateLayer() {
+        removeTextMarkers();
+        layer_radiuspemantauan_2.clearLayers();
+        updateGeoJSON();
+        layer_radiuspemantauan_2.addData(json_radiuspemantauan_2);
+      }
+
+      var layer_radiuspemantauan_2 = new L.geoJson(json_radiuspemantauan_2, {
+        attribution: "",
+        interactive: true,
+        dataVar: "json_radiuspemantauan_2",
+        layerName: "layer_radiuspemantauan_2",
+        pane: "pane_radiuspemantauan_2",
+        onEachFeature: function (feature, layer) {
+          pop_radiuspemantauan_2(feature, layer);
+          addTextToFeature(feature, layer);
+        },
+        style: style_radiuspemantauan_2_0,
+      }).addTo(map);
+
+      setInterval(updateLayer, 10000);
